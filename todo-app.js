@@ -22,7 +22,10 @@
     buttomWrapper.append(button)
     form.append(input)
     form.append(buttomWrapper)
-
+    
+    
+    button.disabled = true
+    
     return {
       form,
       input,
@@ -64,7 +67,8 @@
     }
   }
 
-  function createTodoApp (container, title = 'Список дел'){  
+  function createTodoApp (container, title = 'Список дел', tasks = [] ){ 
+
       let todoAppTitle = createAppTitile(title),
           todoItemForm = createTodoItemForm(),
           todoList = createTodoList()
@@ -72,9 +76,32 @@
       container.append(todoAppTitle)
       container.append(todoItemForm.form)
       container.append(todoList)
-  
+
+     tasks.forEach(task => {
+      let todoItem = createTodoItem(task)
+      todoList.append(todoItem.item)
+
+      todoItem.doneButton.addEventListener('click', () => {
+        todoItem.item.classList.toggle('list-group-item-success')
+      })
+      todoItem.deleteButton.addEventListener('click', () => {
+        if(confirm('Вы уверены?')){
+            todoItem.item.remove()          
+          }
+      })
+     })
+     
+      todoItemForm.form.addEventListener('input', () => {
+        if(!todoItemForm.input.value){
+          todoItemForm.button.disabled = true
+        } else {
+          todoItemForm.button.disabled = false
+        }
+ 
+      })
       todoItemForm.form.addEventListener('submit', function(e){
         e.preventDefault()
+
         // Если ничего не ввели в начальной форме то не создаем элемент 
         if(!todoItemForm.input.value){
           return
@@ -94,7 +121,7 @@
         // Создаем и добавляем задачу в список дел 
         todoList.append(todoItem.item)
         // Обнуляем поле после отправки задачи 
-        todoItemForm.input.value = ''
+        todoItemForm.input.value = ''        
       })  
   }
 
